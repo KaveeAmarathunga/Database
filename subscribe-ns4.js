@@ -34,7 +34,6 @@ function formatSriLankaTime(date) {
   return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}:${get("second")}.${milliseconds}`;
 }
 
-
 // Recursive variable browser
 async function findAllVariableNodes(session, startNodeId) {
   let allVariables = [];
@@ -55,6 +54,11 @@ async function findAllVariableNodes(session, startNodeId) {
 
   await browseRecursively(startNodeId);
   return allVariables;
+}
+
+// Helper: delay function to pause between subscriptions
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Main function
@@ -89,7 +93,7 @@ async function main() {
       console.log("⏳ Still receiving data...");
     }, 10000);
 
-    // Subscribe to each variable
+    // Subscribe to each variable with a small delay to avoid flooding
     for (const variable of allVariables) {
       const nodeId = variable.nodeId;
       console.log("📡 Subscribing to:", nodeId);
@@ -119,6 +123,9 @@ async function main() {
           console.error("❌ InfluxDB write error:", err);
         }
       });
+
+      // Wait 15 ms before subscribing to next node
+      await delay(15);
     }
 
     // Cleanup on exit
@@ -138,3 +145,10 @@ async function main() {
 }
 
 main();
+
+    
+      
+
+    
+   
+    
